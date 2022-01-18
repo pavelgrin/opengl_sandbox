@@ -4,7 +4,7 @@ Project created to learn OpenGL (incl. GLSL, GLFW, GLAD, GLM)
 
 ### Prerequisites
 
-* [CMake](https://cmake.org/install) =>v3.16
+* [CMake](https://cmake.org/install) v3.16+
 
 ### Installation
 
@@ -25,5 +25,5 @@ cmake --build .
 * Run
 
 ```bash
-./build/app/start
+build/bin/app
 ```
