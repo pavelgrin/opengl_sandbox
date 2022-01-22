@@ -4,7 +4,12 @@ project(OPENGL_SANDBOX)
 
 set(APP_NAME app)
 
-add_executable("${APP_NAME}" src/main.cpp)
+set(SOURCE
+   "${CMAKE_SOURCE_DIR}/src/glfw_window.cpp"
+   "${CMAKE_SOURCE_DIR}/src/sdl2_window.cpp"
+)
+
+add_executable("${APP_NAME}" "${SOURCE}" src/main.cpp)
 
 set_target_properties("${APP_NAME}" PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
