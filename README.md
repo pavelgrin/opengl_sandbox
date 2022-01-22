@@ -1,6 +1,6 @@
 ## OpenGL Sandbox
 
-Project created to learn OpenGL (incl. GLSL, GLFW, GLAD, GLM)
+Project created to learn OpenGL (incl. GLSL, GLFW/SDL, GLAD, GLM)
 
 ### Prerequisites
 
