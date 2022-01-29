@@ -1,7 +1,6 @@
 #include "./window.hpp"
 
-void WindowGLFW::create(const int scr_width, const int scr_height, const char *scr_header) const
-{
+void WindowGLFW::create(const int scr_width, const int scr_height, const char *scr_header) const {
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
