@@ -1,8 +1,15 @@
-#include "./glfw_window.hpp"
-#include "./sdl2_window.hpp"
+#include <iostream>
+#include "./render/render.hpp"
+#include "./window/window.hpp"
 
-int main()
-{
-    // return GLFW::createWindow();
-    return SDL2::createWindow();
+int main() {
+    Render render;
+
+    Window *window = new WindowSDL2();
+    // Window *window = new WindowGLFW();
+
+    window->create(800, 600, "OpenGL Sandbox", &render);
+
+    delete window;
+    return 0;
 }

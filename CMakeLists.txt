@@ -5,8 +5,9 @@ project(OPENGL_SANDBOX)
 set(APP_NAME app)
 
 set(SOURCE
-   "${CMAKE_SOURCE_DIR}/src/glfw_window.cpp"
-   "${CMAKE_SOURCE_DIR}/src/sdl2_window.cpp"
+   "${CMAKE_SOURCE_DIR}/src/window/glfw.cpp"
+   "${CMAKE_SOURCE_DIR}/src/window/sdl2.cpp"
+   "${CMAKE_SOURCE_DIR}/src/render/render.cpp"
 )
 
 add_executable("${APP_NAME}" "${SOURCE}" src/main.cpp)
