@@ -1,6 +1,16 @@
-#include "../window/window.hpp"
+#pragma once
+
+#include <glad/glad.h>
 
 class Render {
 public:
-    Render(const Window &win);
+    void loadGLLoader(GLADloadproc getProcAddress) const {
+        gladLoadGLLoader(getProcAddress);
+    }
+
+    void updateViewport(const int width, const int height) const {
+        glViewport(0, 0, width, height);
+    }
+
+    void frame() const;
 };

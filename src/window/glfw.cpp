@@ -1,7 +1,16 @@
 #include "./window.hpp"
 
-void WindowGLFW::create(const int scr_width, const int scr_height, const char *scr_header) const {
-    glfwInit();
+void WindowGLFW::create(
+    const int scr_width,
+    const int scr_height,
+    const char *scr_header,
+    Render *render
+) const {
+    if (!glfwInit()) {
+        std::cerr << "GLFW couldn't be initialized!\n";
+        return;
+    }
+
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -9,28 +18,23 @@ void WindowGLFW::create(const int scr_width, const int scr_height, const char *s
     GLFWwindow *window = glfwCreateWindow(scr_width, scr_height, scr_header, NULL, NULL);
 
     if (window == NULL) {
+        std::cerr << "Failed to create GLFW window\n";
         glfwTerminate();
-        throw "Failed to create GLFW window\n";
+        return;
     }
 
     glfwMakeContextCurrent(window);
-    glfwSetFramebufferSizeCallback(
-        window,
-        [](GLFWwindow *window, int width, int height) {
-            glViewport(0, 0, width, height);
-        }
-    );
+    render->loadGLLoader((loadproc)glfwGetProcAddress);
+    render->updateViewport(scr_width, scr_height);
 
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-        glfwTerminate();
-        throw "Failed to initialize GLAD\n";
-    }
+    // This is the trick to call updateViewport from callback
+    static Render *renderStatic = render;
+    glfwSetFramebufferSizeCallback(window, [](GLFWwindow *window, int width, int height) {
+        renderStatic->updateViewport(width, height);
+    });
 
     while (!glfwWindowShouldClose(window)) {
-        this->processInput(window);
-
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        render->frame();
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -38,5 +42,3 @@ void WindowGLFW::create(const int scr_width, const int scr_height, const char *s
 
     glfwTerminate();
 }
-
-void WindowGLFW::processInput(GLFWwindow *window) const {}
