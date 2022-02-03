@@ -11,6 +11,8 @@ void WindowGLFW::create(
         return;
     }
 
+    gleqInit();
+
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -23,6 +25,7 @@ void WindowGLFW::create(
         return;
     }
 
+    gleqTrackWindow(window);
     glfwMakeContextCurrent(window);
     render->loadGLLoader((loadproc)glfwGetProcAddress);
     render->updateViewport(scr_width, scr_height);
@@ -34,10 +37,16 @@ void WindowGLFW::create(
     });
 
     while (!glfwWindowShouldClose(window)) {
+        glfwPollEvents();
+
+        GLEQevent event;
+        while (gleqNextEvent(&event)) {
+            render->processInput(event.type);
+        }
+
         render->frame();
 
         glfwSwapBuffers(window);
-        glfwPollEvents();
     }
 
     glfwTerminate();

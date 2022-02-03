@@ -14,6 +14,8 @@ add_executable("${APP_NAME}" "${SOURCE}" src/main.cpp)
 
 set_target_properties("${APP_NAME}" PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 
+include_directories("${CMAKE_SOURCE_DIR}/deps/gleq")
+
 add_subdirectory("${CMAKE_SOURCE_DIR}/deps/glad")
 target_link_libraries("${APP_NAME}" glad)
 

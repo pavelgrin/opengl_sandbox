@@ -48,13 +48,13 @@ void WindowSDL2::create(
     render->loadGLLoader((loadproc)SDL_GL_GetProcAddress);
     render->updateViewport(scr_width, scr_height);
 
-    bool keepWindowOpen = true;
-    while (keepWindowOpen) {
+    bool keep_window_open = true;
+    while (keep_window_open) {
         SDL_Event event;
         while (SDL_PollEvent(&event) > 0) {
             switch (event.type) {
                 case SDL_QUIT:
-                    keepWindowOpen = false;
+                    keep_window_open = false;
                     break;
                 case SDL_WINDOWEVENT:
                     if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
@@ -62,6 +62,8 @@ void WindowSDL2::create(
                     }
                     break;
             }
+
+            render->processInput(event.type);
         }
 
         render->frame();
@@ -69,6 +71,7 @@ void WindowSDL2::create(
         SDL_GL_SwapWindow(window);
     }
 
+    SDL_GL_DeleteContext(context);
     SDL_DestroyWindow(window);
     SDL_Quit();
 }

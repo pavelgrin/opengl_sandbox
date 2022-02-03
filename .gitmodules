@@ -4,3 +4,6 @@
 [submodule "deps/sdl2"]
 	path = deps/sdl2
 	url = https://github.com/libsdl-org/SDL.git
+[submodule "deps/gleq"]
+	path = deps/gleq
+	url = https://github.com/glfw/gleq.git

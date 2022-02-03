@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <glad/glad.h>
 
 class Render {
@@ -13,4 +14,5 @@ public:
     }
 
     void frame() const;
+    void processInput(int event) const;
 };
