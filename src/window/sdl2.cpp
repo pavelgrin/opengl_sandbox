@@ -63,7 +63,7 @@ void WindowSDL2::create(
                     break;
             }
 
-            render->processInput(event.key.keysym.scancode);
+            render->processInput(event);
         }
 
         render->frame();

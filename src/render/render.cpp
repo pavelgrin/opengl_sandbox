@@ -5,6 +5,6 @@ void Render::frame() const {
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void Render::processInput(int event) const {
-    std::cout << "event type: " << event << "\n";
+void Render::processInput(SDL_Event event) const {
+    //
 }
