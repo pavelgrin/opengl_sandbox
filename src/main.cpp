@@ -5,9 +5,7 @@
 int main() {
     Render render;
 
-    Window *window = new WindowSDL2();
-    // Window *window = new WindowGLFW();
-
+    Window* window = new WindowSDL2();
     window->create(800, 600, "OpenGL Sandbox", &render);
 
     delete window;

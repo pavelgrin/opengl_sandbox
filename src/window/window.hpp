@@ -1,30 +1,19 @@
 #pragma once
 
-#define GLFW_INCLUDE_NONE
-#define GLEQ_IMPLEMENTATION
-#define GLEQ_STATIC
-
 #include <iostream>
 #include <string>
-#include <GLFW/glfw3.h>
 #include <SDL.h>
-#include <gleq.h>
 #include "../render/render.hpp"
 
-typedef void *(*loadproc)(const char *);
+typedef void *(*loadproc)(const char*);
 
 class Window {
 public:
     virtual ~Window() {}
-    virtual void create(const int, const int, const char *, Render *) const = 0;
+    virtual void create(const int, const int, const char*, Render*) const = 0;
 };
 
 class WindowSDL2 final : public Window {
 public:
-    void create(const int, const int, const char *, Render *) const override;
-};
-
-class WindowGLFW final : public Window {
-public:
-    void create(const int, const int, const char *, Render *) const override;
+    void create(const int, const int, const char*, Render*) const override;
 };
