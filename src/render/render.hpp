@@ -1,5 +1,7 @@
 #pragma once
 
+#include <iostream>
+#include <SDL.h>
 #include <glad/glad.h>
 
 class Render {
@@ -13,4 +15,5 @@ public:
     }
 
     void frame() const;
+    void processInput(SDL_Event event) const;
 };
