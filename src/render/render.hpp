@@ -1,11 +1,11 @@
 #pragma once
 
-#include <iostream>
 #include <SDL.h>
 #include <glad/glad.h>
+#include <iostream>
 
-class Render {
-public:
+class Render final {
+  public:
     void loadGLLoader(GLADloadproc getProcAddress) const {
         gladLoadGLLoader(getProcAddress);
     }

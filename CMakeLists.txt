@@ -5,7 +5,7 @@ project(OPENGL_SANDBOX)
 set(APP_NAME app)
 
 set(SOURCE
-   "${CMAKE_SOURCE_DIR}/src/window/sdl2.cpp"
+   "${CMAKE_SOURCE_DIR}/src/window/window.cpp"
    "${CMAKE_SOURCE_DIR}/src/render/render.cpp"
 )
 
