@@ -1,8 +1,8 @@
 #include "./render/render.hpp"
 #include "./window/window.hpp"
-#include <iostream>
 
-int main() {
+int main()
+{
     Render render;
     Window window;
 

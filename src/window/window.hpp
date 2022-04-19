@@ -5,9 +5,10 @@
 #include <iostream>
 #include <string>
 
-typedef void* (*loadproc)(const char*);
+using loadproc = void* (*)(const char*);
 
-class Window final {
+class Window final
+{
   public:
     void create(const int, const int, const char*, Render*) const;
 };
