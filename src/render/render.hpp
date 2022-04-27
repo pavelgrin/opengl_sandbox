@@ -10,6 +10,7 @@ class Render final
     int m_shader_program;
     unsigned int m_VAO;
     unsigned int m_VBO;
+    unsigned int m_EBO;
 
   public:
     ~Render();
