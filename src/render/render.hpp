@@ -1,18 +1,23 @@
 #pragma once
 
+#include "../shader/shader.hpp"
 #include <SDL.h>
 #include <glad/glad.h>
 #include <iostream>
+#include <string>
 
 class Render final
 {
   private:
-    int m_shader_program;
+    std::string m_resource_dir;
+    Shader m_shader;
+
     unsigned int m_VAO;
     unsigned int m_VBO;
     unsigned int m_EBO;
 
   public:
+    Render(std::string resources_dir) : m_resource_dir(resources_dir) {}
     ~Render();
 
     void loadGLLoader(GLADloadproc getProcAddress) const

@@ -2,64 +2,12 @@
 
 void Render::init()
 {
-    const char* vertex_shader_source =
-        "#version 330 core\n"
-        "layout (location = 0) in vec3 aPos;\n"
-        "void main()\n"
-        "{\n"
-        "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-        "}\0";
+    std::string vertex_path   = m_resource_dir + "shaders/shader.vs";
+    std::string fragment_path = m_resource_dir + "shaders/shader.fs";
 
-    const char* fragment_shader_source =
-        "#version 330 core\n"
-        "out vec4 FragColor;\n"
-        "void main()\n"
-        "{\n"
-        "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-        "}\n\0";
+    m_shader.init(vertex_path.c_str(), fragment_path.c_str());
 
-    int success;
-    char info_log[512];
-
-    int vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertex_shader, 1, &vertex_shader_source, NULL);
-    glCompileShader(vertex_shader);
-
-    glGetShaderiv(vertex_shader, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
-        glGetShaderInfoLog(vertex_shader, 512, NULL, info_log);
-        std::cerr << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n"
-                  << info_log << "\n";
-    }
-
-    int fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragment_shader, 1, &fragment_shader_source, NULL);
-    glCompileShader(fragment_shader);
-
-    glGetShaderiv(fragment_shader, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
-        glGetShaderInfoLog(fragment_shader, 512, NULL, info_log);
-        std::cerr << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n"
-                  << info_log << "\n";
-    }
-
-    m_shader_program = glCreateProgram();
-    glAttachShader(m_shader_program, vertex_shader);
-    glAttachShader(m_shader_program, fragment_shader);
-    glLinkProgram(m_shader_program);
-
-    glGetProgramiv(m_shader_program, GL_LINK_STATUS, &success);
-    if (!success)
-    {
-        glGetProgramInfoLog(m_shader_program, 512, NULL, info_log);
-        std::cerr << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n"
-                  << info_log << "\n";
-    }
-
-    glDeleteShader(vertex_shader);
-    glDeleteShader(fragment_shader);
+    // std::cout << << std::endl;
 
     // // clang-format off
     // float vertices[] = {
@@ -115,9 +63,9 @@ void Render::frame() const
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    glUseProgram(m_shader_program);
+    m_shader.use();
     glBindVertexArray(m_VAO);
-    // glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
@@ -131,5 +79,4 @@ Render::~Render()
     glDeleteVertexArrays(1, &m_VAO);
     glDeleteBuffers(1, &m_VBO);
     glDeleteBuffers(1, &m_EBO);
-    glDeleteProgram(m_shader_program);
 }
