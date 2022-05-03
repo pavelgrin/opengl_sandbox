@@ -9,15 +9,16 @@
 class Render final
 {
   private:
-    std::string m_resource_dir;
+    std::string m_resources_dir;
     Shader m_shader;
+    unsigned int m_texture;
 
     unsigned int m_VAO;
     unsigned int m_VBO;
     unsigned int m_EBO;
 
   public:
-    Render(std::string resources_dir) : m_resource_dir(resources_dir) {}
+    Render(std::string m_resources_dir) : m_resources_dir(m_resources_dir) {}
     ~Render();
 
     void loadGLLoader(GLADloadproc getProcAddress) const

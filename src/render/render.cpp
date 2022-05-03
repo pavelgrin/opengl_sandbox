@@ -1,30 +1,59 @@
 #include "./render.hpp"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+
 void Render::init()
 {
-    std::string vertex_path   = m_resource_dir + "shaders/shader.vs";
-    std::string fragment_path = m_resource_dir + "shaders/shader.fs";
+    std::string vertex_path   = m_resources_dir + "shaders/shader.vs";
+    std::string fragment_path = m_resources_dir + "shaders/shader.fs";
 
     m_shader.init(vertex_path.c_str(), fragment_path.c_str());
 
-    // std::cout << << std::endl;
+    glGenTextures(1, &m_texture);
+    glBindTexture(GL_TEXTURE_2D, m_texture);
 
-    // // clang-format off
-    // float vertices[] = {
-    //    -0.5f, -0.5f, 0.0f,
-    //     0.5f, -0.5f, 0.0f,
-    //     0.0f,  0.5f, 0.0f,
-    // };
-    // // clang-format on
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D,
+                    GL_TEXTURE_MIN_FILTER,
+                    GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    std::string texture_path = m_resources_dir + "textures/container.jpg";
+
+    int width, height, nrChannels;
+    unsigned char* data =
+        stbi_load(texture_path.c_str(), &width, &height, &nrChannels, 0);
+
+    if (data)
+    {
+        glTexImage2D(GL_TEXTURE_2D,
+                     0,
+                     GL_RGB,
+                     width,
+                     height,
+                     0,
+                     GL_RGB,
+                     GL_UNSIGNED_BYTE,
+                     data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
+    else
+    {
+        std::cerr << "Failed to load texture\n";
+    }
+    stbi_image_free(data);
 
     // clang-format off
     float vertices[] = {
-        0.5f,  0.5f, 0.0f,  // top right
-        0.5f, -0.5f, 0.0f,  // bottom right
-       -0.5f, -0.5f, 0.0f,  // bottom left
-       -0.5f,  0.5f, 0.0f   // top left 
+        // positions         // colors           // texture coords
+        0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
+        0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
+       -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
+       -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
     };
-    
+
     unsigned int indices[] = { 
         0, 1, 3,   // first triangle
         1, 2, 3    // second triangle
@@ -49,10 +78,26 @@ void Render::init()
                           3,
                           GL_FLOAT,
                           GL_FALSE,
-                          3 * sizeof(float),
+                          8 * sizeof(float),
                           (void*)0);
-
     glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1,
+                          3,
+                          GL_FLOAT,
+                          GL_FALSE,
+                          8 * sizeof(float),
+                          (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
+    glVertexAttribPointer(2,
+                          2,
+                          GL_FLOAT,
+                          GL_FALSE,
+                          8 * sizeof(float),
+                          (void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
+
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     glBindVertexArray(0);
@@ -64,8 +109,9 @@ void Render::frame() const
     glClear(GL_COLOR_BUFFER_BIT);
 
     m_shader.use();
+    glBindTexture(GL_TEXTURE_2D, m_texture);
     glBindVertexArray(m_VAO);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    // glDrawArrays(GL_TRIANGLES, 0, 3);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
