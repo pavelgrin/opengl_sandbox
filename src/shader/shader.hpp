@@ -8,9 +8,9 @@
 
 class Shader
 {
+public:
     unsigned int m_program_id;
 
-  public:
     ~Shader();
 
     void init(const char* vertex_path, const char* fragment_path);

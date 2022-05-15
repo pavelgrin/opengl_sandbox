@@ -8,16 +8,16 @@
 
 class Render final
 {
-  private:
+private:
     std::string m_resources_dir;
     Shader m_shader;
-    unsigned int m_texture;
+    unsigned int m_texture[2];
 
     unsigned int m_VAO;
     unsigned int m_VBO;
     unsigned int m_EBO;
 
-  public:
+public:
     Render(std::string m_resources_dir) : m_resources_dir(m_resources_dir) {}
     ~Render();
 

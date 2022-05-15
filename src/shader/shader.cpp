@@ -32,7 +32,6 @@ void Shader::init(const char* vertex_path, const char* fragment_path)
     {
         std::cerr << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ\n"
                   << e.what() << "\n";
-        exit(1);
     }
 
     const char* vertex_shader_source   = v_shader_string.c_str();

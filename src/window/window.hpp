@@ -9,6 +9,6 @@ using loadproc = void* (*)(const char*);
 
 class Window final
 {
-  public:
+public:
     void create(const int, const int, const char*, Render*) const;
 };

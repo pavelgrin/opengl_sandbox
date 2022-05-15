@@ -18,13 +18,9 @@ void Window::create(const int scr_width,
                         SDL_GL_CONTEXT_PROFILE_CORE);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-    SDL_Window* window =
-        SDL_CreateWindow(scr_header,
-                         SDL_WINDOWPOS_CENTERED,
-                         SDL_WINDOWPOS_CENTERED,
-                         scr_width,
-                         scr_height,
-                         SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+    SDL_Window* window = SDL_CreateWindow(
+        scr_header, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, scr_width,
+        scr_height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 
     if (window == nullptr)
     {
