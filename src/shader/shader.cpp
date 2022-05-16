@@ -1,5 +1,7 @@
 #include "./shader.hpp"
 
+Shader::~Shader() { glDeleteProgram(m_program_id); }
+
 void Shader::init(const char* vertex_path, const char* fragment_path)
 {
     std::ifstream v_shader_file;
@@ -84,4 +86,7 @@ void Shader::init(const char* vertex_path, const char* fragment_path)
 
 void Shader::use() const { glUseProgram(m_program_id); }
 
-Shader::~Shader() { glDeleteProgram(m_program_id); }
+void Shader::setInt(const std::string& name, int value) const
+{
+    glUniform1i(glGetUniformLocation(m_program_id, name.c_str()), value);
+}

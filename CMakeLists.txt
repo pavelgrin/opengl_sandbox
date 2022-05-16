@@ -9,6 +9,7 @@ set(SOURCE
    "${CMAKE_SOURCE_DIR}/src/window/window.cpp"
    "${CMAKE_SOURCE_DIR}/src/render/render.cpp"
    "${CMAKE_SOURCE_DIR}/src/shader/shader.cpp"
+   "${CMAKE_SOURCE_DIR}/src/mesh/mesh.cpp"
 )
 
 add_executable("${APP_NAME}" "${SOURCE}")

@@ -15,4 +15,5 @@ public:
 
     void init(const char* vertex_path, const char* fragment_path);
     void use() const;
+    void setInt(const std::string& name, int value) const;
 };
