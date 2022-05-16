@@ -27,3 +27,6 @@ set(SDL_SHARED OFF CACHE BOOL "" FORCE)
 
 add_subdirectory("${CMAKE_SOURCE_DIR}/deps/stb")
 target_link_libraries("${APP_NAME}" stb)
+
+add_subdirectory("${CMAKE_SOURCE_DIR}/deps/glm")
+target_link_libraries("${APP_NAME}" glm)
