@@ -3,6 +3,7 @@
 #include "../mesh/mesh.hpp"
 #include "../shader/shader.hpp"
 #include <SDL.h>
+#include <cmath>
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>

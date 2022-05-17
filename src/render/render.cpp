@@ -110,7 +110,14 @@ void Render::frame(uint64_t time_ms) const
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glm::mat4 view       = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -3.0f));
+    const float radius = 10.0f;
+    float cam_x        = std::sin(static_cast<float>(time_ms) / 1000) * radius;
+    float cam_z        = std::cos(static_cast<float>(time_ms) / 1000) * radius;
+
+    glm::mat4 view = glm::lookAt(glm::vec3(cam_x, 0.0f, cam_z),
+                                 glm::vec3(0.0f, 0.0f, 0.0f),
+                                 glm::vec3(0.0f, 1.0f, 0.0f));
+
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1.0f, 0.1f, 100.0f);
 
     m_shader.use();
