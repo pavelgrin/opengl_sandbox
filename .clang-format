@@ -8,3 +8,4 @@ AlignConsecutiveAssignments: true
 AlignConsecutiveMacros: true
 IndentAccessModifiers: false
 AccessModifierOffset: -4
+AlignTrailingComments: true

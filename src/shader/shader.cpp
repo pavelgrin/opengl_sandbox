@@ -1,6 +1,6 @@
 #include "./shader.hpp"
 
-Shader::~Shader() { glDeleteProgram(m_program_id); }
+Shader::~Shader() { glDeleteProgram(m_id); }
 
 void Shader::init(const char* vertex_path, const char* fragment_path)
 {
@@ -67,15 +67,15 @@ void Shader::init(const char* vertex_path, const char* fragment_path)
                   << info_log << "\n";
     }
 
-    m_program_id = glCreateProgram();
-    glAttachShader(m_program_id, vertex_shader);
-    glAttachShader(m_program_id, fragment_shader);
-    glLinkProgram(m_program_id);
+    m_id = glCreateProgram();
+    glAttachShader(m_id, vertex_shader);
+    glAttachShader(m_id, fragment_shader);
+    glLinkProgram(m_id);
 
-    glGetProgramiv(m_program_id, GL_LINK_STATUS, &success);
+    glGetProgramiv(m_id, GL_LINK_STATUS, &success);
     if (!success)
     {
-        glGetProgramInfoLog(m_program_id, 512, NULL, info_log);
+        glGetProgramInfoLog(m_id, 512, NULL, info_log);
         std::cerr << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n"
                   << info_log << "\n";
     }
@@ -84,9 +84,15 @@ void Shader::init(const char* vertex_path, const char* fragment_path)
     glDeleteShader(fragment_shader);
 }
 
-void Shader::use() const { glUseProgram(m_program_id); }
+void Shader::use() const { glUseProgram(m_id); }
 
 void Shader::setInt(const std::string& name, int value) const
 {
-    glUniform1i(glGetUniformLocation(m_program_id, name.c_str()), value);
+    glUniform1i(glGetUniformLocation(m_id, name.c_str()), value);
+}
+
+void Shader::setMat4(const std::string& name, const glm::mat4& mat) const
+{
+    unsigned int location = glGetUniformLocation(m_id, name.c_str());
+    glUniformMatrix4fv(location, 1, GL_FALSE, &mat[0][0]);
 }

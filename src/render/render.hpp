@@ -4,6 +4,8 @@
 #include "../shader/shader.hpp"
 #include <SDL.h>
 #include <glad/glad.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -33,6 +35,6 @@ public:
     }
 
     void init();
-    void frame() const;
+    void frame(uint64_t time_ms) const;
     void processInput(SDL_Event event) const;
 };

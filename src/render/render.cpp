@@ -1,19 +1,10 @@
 #include "./render.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 #include <stb_image.h>
 
 void Render::init()
 {
-    glm::vec4 vec(1.0f, 0.0f, 0.0f, 1.0f);
-    glm::mat4 trans = glm::mat4(1.0f);
-    trans           = glm::translate(trans, glm::vec3(1.0f, 1.0f, 0.0f));
-    vec             = trans * vec;
-    std::cout << vec.x << vec.y << vec.z << std::endl;
-
     std::string vertex_path   = m_resources_dir + "shaders/shader.vs";
     std::string fragment_path = m_resources_dir + "shaders/shader.fs";
 
@@ -59,11 +50,11 @@ void Render::init()
 
     // clang-format off
     std::vector<float> vertices{
-        // positions         // colors           // texture coords
-        0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
-        0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
-       -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
-       -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
+        // positions        // texture coords
+        0.5f,  0.5f, 0.0f,  1.0f, 1.0f, // top right
+        0.5f, -0.5f, 0.0f,  1.0f, 0.0f, // bottom right
+       -0.5f, -0.5f, 0.0f,  0.0f, 0.0f, // bottom left
+       -0.5f,  0.5f, 0.0f,  0.0f, 1.0f  // top left 
     };
 
     std::vector<unsigned int> indices{ 
@@ -76,10 +67,17 @@ void Render::init()
     m_square.init(m_shader, vertices, indices, textures);
 }
 
-void Render::frame() const
+void Render::frame(uint64_t time_ms) const
 {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
+
+    glm::mat4 matrix = glm::mat4(1.0f);
+    matrix           = glm::rotate(matrix, static_cast<float>(time_ms) / 1000,
+                                   glm::vec3(0.0f, 0.0f, 1.0f));
+
+    m_shader.use();
+    m_shader.setMat4("transform", matrix);
 
     m_square.draw();
 }

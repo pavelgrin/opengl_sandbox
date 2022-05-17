@@ -70,7 +70,7 @@ void Window::create(const int scr_width,
             render->processInput(event);
         }
 
-        render->frame();
+        render->frame(SDL_GetTicks64());
 
         SDL_GL_SwapWindow(window);
     }
