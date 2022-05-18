@@ -105,20 +105,21 @@ void Render::init()
     m_square.init(m_shader, vertices, indices, textures);
 }
 
-void Render::frame(uint64_t time_ms) const
+void Render::frame(float dt, float lifetime) const
 {
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    const float radius = 10.0f;
-    float cam_x        = std::sin(static_cast<float>(time_ms) / 1000) * radius;
-    float cam_z        = std::cos(static_cast<float>(time_ms) / 1000) * radius;
+    // const float radius = 10.0f;
+    // float cam_x        = std::sin(lifetime) * radius;
+    // float cam_z        = std::cos(lifetime) * radius;
 
-    glm::mat4 view = glm::lookAt(glm::vec3(cam_x, 0.0f, cam_z),
-                                 glm::vec3(0.0f, 0.0f, 0.0f),
-                                 glm::vec3(0.0f, 1.0f, 0.0f));
+    // glm::mat4 view = glm::lookAt(glm::vec3(cam_x, 0.0f, cam_z),
+    //                              glm::vec3(0.0f, 0.0f, 0.0f),
+    //                              glm::vec3(0.0f, 1.0f, 0.0f));
 
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), 1.0f, 0.1f, 100.0f);
+    glm::mat4 view       = m_camera.lookAt();
+    glm::mat4 projection = glm::perspective(glm::radians(m_camera.zoom()), 1.0f, 0.1f, 100.0f);
 
     m_shader.use();
     m_shader.setMat4("view", view);
@@ -145,7 +146,7 @@ void Render::frame(uint64_t time_ms) const
         float base_angle = 20.0f * i + 20.0f;
 
         model = glm::rotate(model,
-                            static_cast<float>(time_ms) / 1000 * glm::radians(base_angle),
+                            lifetime * glm::radians(base_angle),
                             glm::vec3(1.0f, 0.3f, 0.5f));
 
         m_shader.setMat4("model", model);
@@ -153,7 +154,7 @@ void Render::frame(uint64_t time_ms) const
     }
 }
 
-void Render::processInput(SDL_Event event) const
+void Render::processInput(const uint8_t* keystates, const float dt, bool* is_window_open)
 {
     //
 }

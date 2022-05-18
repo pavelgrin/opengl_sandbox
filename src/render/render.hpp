@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../camera/camera.hpp"
 #include "../mesh/mesh.hpp"
 #include "../shader/shader.hpp"
 #include <SDL.h>
@@ -18,6 +19,7 @@ private:
 
     Shader m_shader;
     Mesh m_square;
+    Camera m_camera{glm::vec3(0.0f, 0.0f, 3.0f)};
 
 public:
     Render(std::string m_resources_dir) : m_resources_dir(m_resources_dir) {}
@@ -36,6 +38,6 @@ public:
     }
 
     void init();
-    void frame(uint64_t time_ms) const;
-    void processInput(SDL_Event event) const;
+    void frame(float dt_ms, float lifetime) const;
+    void processInput(const uint8_t* keystates, const float dt, bool* is_window_open);
 };

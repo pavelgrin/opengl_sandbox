@@ -1,4 +1,7 @@
+#pragma once
+
 #include "../shader/shader.hpp"
+#include <glad/glad.h>
 #include <vector>
 
 class Mesh

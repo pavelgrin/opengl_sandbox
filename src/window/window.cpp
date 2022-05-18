@@ -47,9 +47,15 @@ void Window::create(const int scr_width,
     render->updateViewport(scr_width, scr_height);
     render->init();
 
+    float lifetime        = static_cast<float>(SDL_GetTicks64()) / 1000;
     bool keep_window_open = true;
+
     while (keep_window_open)
     {
+        const float current_time = static_cast<float>(SDL_GetTicks64()) / 1000;
+        const float dt           = current_time - lifetime;
+        lifetime                 = current_time;
+
         SDL_Event event;
         while (SDL_PollEvent(&event) > 0)
         {
@@ -66,11 +72,12 @@ void Window::create(const int scr_width,
                 }
                 break;
             }
-
-            render->processInput(event);
         }
 
-        render->frame(SDL_GetTicks64());
+        const uint8_t* keystates = SDL_GetKeyboardState(NULL);
+        render->processInput(keystates, dt, &keep_window_open);
+
+        render->frame(dt, lifetime);
 
         SDL_GL_SwapWindow(window);
     }
