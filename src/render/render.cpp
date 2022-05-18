@@ -156,5 +156,34 @@ void Render::frame(float dt, float lifetime) const
 
 void Render::processInput(const uint8_t* keystates, const float dt, bool* is_window_open)
 {
-    //
+    float forward{0.0f};
+    float backward{0.0f};
+    float left{0.0f};
+    float right{0.0f};
+    float yaw{0.0f};
+    float pitch{0.0f};
+    float zoom{0.0f};
+
+    const float velocity = dt * 2.5f;
+
+    if (keystates[SDL_SCANCODE_ESCAPE])
+        *is_window_open = false;
+    if (keystates[SDL_SCANCODE_W])
+        forward = velocity;
+    if (keystates[SDL_SCANCODE_S])
+        backward = velocity;
+    if (keystates[SDL_SCANCODE_A])
+        left = velocity;
+    if (keystates[SDL_SCANCODE_D])
+        right = velocity;
+
+    m_camera.move({
+        forward,
+        backward,
+        left,
+        right,
+        yaw,
+        pitch,
+        zoom,
+    });
 }
