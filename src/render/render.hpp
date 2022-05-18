@@ -39,5 +39,9 @@ public:
 
     void init();
     void frame(float dt_ms, float lifetime) const;
-    void processInput(const uint8_t* keystates, const float dt, bool* is_window_open);
+    void processInput(const uint8_t* keystates,
+                      const int mouse_x_delta,
+                      const int mouse_y_delta,
+                      const int mouse_wheel_delta,
+                      const float dt);
 };

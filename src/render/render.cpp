@@ -154,7 +154,11 @@ void Render::frame(float dt, float lifetime) const
     }
 }
 
-void Render::processInput(const uint8_t* keystates, const float dt, bool* is_window_open)
+void Render::processInput(const uint8_t* keystates,
+                          const int mouse_x_delta,
+                          const int mouse_y_delta,
+                          const int mouse_wheel_delta,
+                          const float dt)
 {
     float forward{0.0f};
     float backward{0.0f};
@@ -164,10 +168,13 @@ void Render::processInput(const uint8_t* keystates, const float dt, bool* is_win
     float pitch{0.0f};
     float zoom{0.0f};
 
-    const float velocity = dt * 2.5f;
+    const float velocity          = dt * 2.5f;
+    const float mouse_sensitivity = 0.1f;
 
-    if (keystates[SDL_SCANCODE_ESCAPE])
-        *is_window_open = false;
+    yaw   = mouse_x_delta * mouse_sensitivity;
+    pitch = mouse_y_delta * mouse_sensitivity * -1;
+    zoom  = mouse_wheel_delta;
+
     if (keystates[SDL_SCANCODE_W])
         forward = velocity;
     if (keystates[SDL_SCANCODE_S])

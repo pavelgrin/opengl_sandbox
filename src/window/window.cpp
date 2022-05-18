@@ -1,10 +1,13 @@
 #include "./window.hpp"
 
-void Window::create(const int scr_width,
-                    const int scr_height,
+void Window::create(const int width,
+                    const int height,
                     const char* scr_header,
                     Render* render) const
 {
+    int scr_width  = width;
+    int scr_height = height;
+
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
     {
         std::string error_desc = "SDL couldn't be initialized!\n";
@@ -56,6 +59,10 @@ void Window::create(const int scr_width,
         const float dt           = current_time - lifetime;
         lifetime                 = current_time;
 
+        int mouse_x_delta     = 0;
+        int mouse_y_delta     = 0;
+        int mouse_wheel_delta = 0;
+
         SDL_Event event;
         while (SDL_PollEvent(&event) > 0)
         {
@@ -67,15 +74,39 @@ void Window::create(const int scr_width,
             case SDL_WINDOWEVENT:
                 if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
                 {
-                    render->updateViewport(event.window.data1,
-                                           event.window.data2);
+                    scr_width  = event.window.data1;
+                    scr_height = event.window.data2;
+                    render->updateViewport(scr_width, scr_height);
                 }
+                break;
+            case SDL_KEYDOWN:
+                if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
+                    keep_window_open = false;
+                break;
+            case SDL_MOUSEWHEEL:
+                mouse_wheel_delta += event.wheel.y;
                 break;
             }
         }
 
-        const uint8_t* keystates = SDL_GetKeyboardState(NULL);
-        render->processInput(keystates, dt, &keep_window_open);
+        const uint8_t* keystates        = SDL_GetKeyboardState(NULL);
+        const uint32_t mouse_state_mask = SDL_GetRelativeMouseState(&mouse_x_delta, &mouse_y_delta);
+
+        if ((mouse_state_mask & SDL_BUTTON_RMASK) != 0)
+        {
+            SDL_SetRelativeMouseMode(SDL_TRUE);
+            SDL_WarpMouseInWindow(window, scr_width / 2, scr_height / 2);
+
+            render->processInput(keystates,
+                                 mouse_x_delta,
+                                 mouse_y_delta,
+                                 mouse_wheel_delta,
+                                 dt);
+        }
+        else
+        {
+            SDL_SetRelativeMouseMode(SDL_FALSE);
+        }
 
         render->frame(dt, lifetime);
 
