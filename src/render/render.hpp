@@ -16,6 +16,7 @@ class Render final
 {
 private:
     std::string m_resources_dir;
+    float m_aspect = 1.0f;
 
     Shader m_shader;
     Mesh m_square;
@@ -32,8 +33,9 @@ public:
         }
     }
 
-    void updateViewport(const int width, const int height) const
+    void updateViewport(const int width, const int height)
     {
+        m_aspect = static_cast<float>(width) / height;
         glViewport(0, 0, width, height);
     }
 

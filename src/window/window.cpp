@@ -90,7 +90,8 @@ void Window::create(const int width,
         }
 
         const uint8_t* keystates        = SDL_GetKeyboardState(NULL);
-        const uint32_t mouse_state_mask = SDL_GetRelativeMouseState(&mouse_x_delta, &mouse_y_delta);
+        const uint32_t mouse_state_mask = SDL_GetRelativeMouseState(&mouse_x_delta,
+                                                                    &mouse_y_delta);
 
         if ((mouse_state_mask & SDL_BUTTON_RMASK) != 0)
         {

@@ -119,7 +119,7 @@ void Render::frame(float dt, float lifetime) const
     //                              glm::vec3(0.0f, 1.0f, 0.0f));
 
     glm::mat4 view       = m_camera.lookAt();
-    glm::mat4 projection = glm::perspective(glm::radians(m_camera.zoom()), 1.0f, 0.1f, 100.0f);
+    glm::mat4 projection = glm::perspective(glm::radians(m_camera.zoom()), m_aspect, 0.1f, 100.0f);
 
     m_shader.use();
     m_shader.setMat4("view", view);
