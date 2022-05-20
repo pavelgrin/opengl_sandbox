@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../shader/shader.hpp"
+#include "./shader.hpp"
 #include <glad/glad.h>
 #include <vector>
 

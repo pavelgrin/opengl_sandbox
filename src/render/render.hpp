@@ -4,11 +4,17 @@
 #include <string>
 
 using GLADloadproc = void* (*)(const char*);
+class Camera;
+class Shader;
+class Mesh;
 
 class Render
 {
 private:
     static float m_aspect_ratio;
+    static Camera m_camera;
+    static Shader m_shader;
+    static Mesh m_square;
 
 public:
     static int init(const GLADloadproc get_proc_address,
