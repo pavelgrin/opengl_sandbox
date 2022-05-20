@@ -1,49 +1,29 @@
 #pragma once
 
-#include "../camera/camera.hpp"
-#include "../mesh/mesh.hpp"
-#include "../shader/shader.hpp"
-#include <SDL.h>
-#include <cmath>
-#include <glad/glad.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <iostream>
+#include "../window/states.hpp"
 #include <string>
-#include <vector>
 
-class Render final
+using GLADloadproc = void* (*)(const char*);
+
+class Render
 {
 private:
-    std::string m_resources_dir;
-    float m_aspect = 1.0f;
-
-    Shader m_shader;
-    Mesh m_square;
-    Camera m_camera{glm::vec3(0.0f, 0.0f, 3.0f)};
+    static float m_aspect_ratio;
 
 public:
-    Render(std::string m_resources_dir) : m_resources_dir(m_resources_dir) {}
+    static int init(const GLADloadproc get_proc_address,
+                    const std::string res_dir,
+                    const int viewport_width, const int viewport_height);
 
-    void loadGLLoader(GLADloadproc getProcAddress) const
-    {
-        if (!gladLoadGLLoader(getProcAddress))
-        {
-            std::cerr << "Failed to initialize GLAD\n";
-        }
-    }
+    static void fini();
 
-    void updateViewport(const int width, const int height)
-    {
-        m_aspect = static_cast<float>(width) / height;
-        glViewport(0, 0, width, height);
-    }
+    static void update(EventStates* states,
+                       EventActions* actions,
+                       const float dt);
 
-    void init();
-    void frame(float dt_ms, float lifetime) const;
-    void processInput(const uint8_t* keystates,
-                      const int mouse_x_delta,
-                      const int mouse_y_delta,
-                      const int mouse_wheel_delta,
-                      const float dt);
+private:
+    static void updateViewport(const int width, const int height);
+    static void processEvents(EventStates* states,
+                              EventActions* actions,
+                              const float dt);
 };

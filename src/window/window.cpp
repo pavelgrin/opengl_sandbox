@@ -1,120 +1,83 @@
 #include "./window.hpp"
+#include <SDL.h>
+#include <iostream>
 
-void Window::create(const int width,
-                    const int height,
-                    const char* scr_header,
-                    Render* render) const
+SDL_Window* Window::m_window;
+SDL_GLContext Window::m_context;
+
+int Window::m_width  = 0;
+int Window::m_height = 0;
+
+int Window::create(const int width, const int height, const char* title)
 {
-    int scr_width  = width;
-    int scr_height = height;
+    m_width  = width;
+    m_height = height;
 
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
     {
-        std::string error_desc = "SDL couldn't be initialized!\n";
+        const char* error_desc = "SDL couldn't be initialized!\n";
         std::cerr << error_desc << "SDL_Error: " << SDL_GetError() << "\n";
-        return;
+
+        terminate();
+        return -1;
     }
 
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK,
-                        SDL_GL_CONTEXT_PROFILE_CORE);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-    SDL_Window* window = SDL_CreateWindow(
-        scr_header, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, scr_width,
-        scr_height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+    m_window = SDL_CreateWindow(title,
+                                SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+                                m_width, m_height,
+                                SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 
-    if (window == nullptr)
+    if (m_window == NULL)
     {
-        std::string error_desc = "Window could not be created!\n";
+        const char* error_desc = "Window could not be created!\n";
         std::cerr << error_desc << "SDL_Error: " << SDL_GetError() << "\n";
 
-        SDL_Quit();
-        return;
+        terminate();
+        return -1;
     }
 
-    SDL_GLContext context = SDL_GL_CreateContext(window);
+    SDL_GLContext m_context = SDL_GL_CreateContext(m_window);
 
-    if (context == NULL)
+    if (m_context == NULL)
     {
-        std::string error_desc = "Failed to create OpenGL context!\n";
+        const char* error_desc = "Failed to create OpenGL context!\n";
         std::cerr << error_desc << "SDL_Error: " << SDL_GetError() << "\n";
 
-        SDL_DestroyWindow(window);
-        SDL_Quit();
-        return;
+        terminate();
+        return -1;
     }
 
-    render->loadGLLoader(static_cast<loadproc>(SDL_GL_GetProcAddress));
-    render->updateViewport(scr_width, scr_height);
-    render->init();
+    return 0;
+}
 
-    float lifetime        = static_cast<float>(SDL_GetTicks64()) / 1000;
-    bool keep_window_open = true;
-
-    while (keep_window_open)
-    {
-        const float current_time = static_cast<float>(SDL_GetTicks64()) / 1000;
-        const float dt           = current_time - lifetime;
-        lifetime                 = current_time;
-
-        int mouse_x_delta     = 0;
-        int mouse_y_delta     = 0;
-        int mouse_wheel_delta = 0;
-
-        SDL_Event event;
-        while (SDL_PollEvent(&event) > 0)
-        {
-            switch (event.type)
-            {
-            case SDL_QUIT:
-                keep_window_open = false;
-                break;
-            case SDL_WINDOWEVENT:
-                if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
-                {
-                    scr_width  = event.window.data1;
-                    scr_height = event.window.data2;
-                    render->updateViewport(scr_width, scr_height);
-                }
-                break;
-            case SDL_KEYDOWN:
-                if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
-                    keep_window_open = false;
-                break;
-            case SDL_MOUSEWHEEL:
-                mouse_wheel_delta += event.wheel.y;
-                break;
-            }
-        }
-
-        const uint8_t* keystates        = SDL_GetKeyboardState(NULL);
-        const uint32_t mouse_state_mask = SDL_GetRelativeMouseState(&mouse_x_delta,
-                                                                    &mouse_y_delta);
-
-        if ((mouse_state_mask & SDL_BUTTON_RMASK) != 0)
-        {
-            SDL_SetRelativeMouseMode(SDL_TRUE);
-            SDL_WarpMouseInWindow(window, scr_width / 2, scr_height / 2);
-
-            render->processInput(keystates,
-                                 mouse_x_delta,
-                                 mouse_y_delta,
-                                 mouse_wheel_delta,
-                                 dt);
-        }
-        else
-        {
-            SDL_SetRelativeMouseMode(SDL_FALSE);
-        }
-
-        render->frame(dt, lifetime);
-
-        SDL_GL_SwapWindow(window);
-    }
-
-    SDL_GL_DeleteContext(context);
-    SDL_DestroyWindow(window);
+void Window::terminate()
+{
+    SDL_GL_DeleteContext(m_context);
+    SDL_DestroyWindow(m_window);
     SDL_Quit();
+}
+
+void Window::swapBuffers()
+{
+    SDL_GL_SwapWindow(m_window);
+}
+
+loadproc Window::getProcAddressFunction()
+{
+    return SDL_GL_GetProcAddress;
+}
+
+float Window::getElapsedTime()
+{
+    return static_cast<float>(SDL_GetTicks64()) / 1000;
+}
+
+SDL_Window* Window::getWindow()
+{
+    return m_window;
 }

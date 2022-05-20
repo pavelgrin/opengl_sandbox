@@ -1,14 +1,25 @@
 #pragma once
 
-#include "../render/render.hpp"
-#include <SDL.h>
-#include <iostream>
-#include <string>
+using loadproc      = void* (*)(const char*);
+using SDL_GLContext = void*;
+struct SDL_Window;
 
-using loadproc = void* (*)(const char*);
-
-class Window final
+class Window
 {
+private:
+    static SDL_Window* m_window;
+    static SDL_GLContext m_context;
+
+    static int m_width;
+    static int m_height;
+
 public:
-    void create(const int, const int, const char*, Render*) const;
+    static int create(const int width, const int height, const char* title);
+    static void terminate();
+
+    static void swapBuffers();
+
+    static loadproc getProcAddressFunction();
+    static float getElapsedTime();
+    static SDL_Window* getWindow();
 };
