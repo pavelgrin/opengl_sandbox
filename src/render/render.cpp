@@ -14,8 +14,10 @@
 
 float Render::m_aspect_ratio = 1.0f;
 Camera Render::m_camera;
-Shader* Render::m_shader;
-Mesh Render::m_square;
+Shader* Render::m_main_shader;
+Shader* Render::m_light_shader;
+Mesh Render::m_cube;
+Mesh Render::m_light;
 
 int Render::init(const GLADloadproc get_proc_address,
                  const std::string res_dir,
@@ -30,62 +32,66 @@ int Render::init(const GLADloadproc get_proc_address,
     glEnable(GL_DEPTH_TEST);
     updateViewport(viewport_width, viewport_height);
 
-    std::string vertex_path   = res_dir + "shaders/main.vertex.glsl";
-    std::string fragment_path = res_dir + "shaders/main.fragment.glsl";
+    std::string main_vertex_path    = res_dir + "shaders/main.vertex.glsl";
+    std::string main_fragment_path  = res_dir + "shaders/main.fragment.glsl";
+    std::string light_fragment_path = res_dir + "shaders/light.fragment.glsl";
+
+    m_main_shader  = loadShader(main_vertex_path.c_str(), main_fragment_path.c_str());
+    m_light_shader = loadShader(main_vertex_path.c_str(), light_fragment_path.c_str());
 
     std::vector<std::string> texture_paths{
         res_dir + "textures/container.jpg",
         res_dir + "textures/awesomeface.png",
     };
 
-    std::vector<Texture2D*> textures(texture_paths.size());
+    std::vector<Texture2D*> textures;
 
-    textures[0] = loadTexture(texture_paths[0].c_str(), false);
-    textures[1] = loadTexture(texture_paths[1].c_str(), true);
+    // textures[0] = loadTexture(texture_paths[0].c_str(), false);
+    // textures[1] = loadTexture(texture_paths[1].c_str(), true);
 
     // clang-format off
     std::vector<float> vertices{
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-         0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,
+         0.5f, -0.5f, -0.5f,
+         0.5f,  0.5f, -0.5f,
+         0.5f,  0.5f, -0.5f,
+        -0.5f,  0.5f, -0.5f,
+        -0.5f, -0.5f, -0.5f,
 
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,
+         0.5f, -0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+        -0.5f,  0.5f,  0.5f,
+        -0.5f, -0.5f,  0.5f,
 
-        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,
+        -0.5f,  0.5f, -0.5f,
+        -0.5f, -0.5f, -0.5f,
+        -0.5f, -0.5f, -0.5f,
+        -0.5f, -0.5f,  0.5f,
+        -0.5f,  0.5f,  0.5f,
 
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f, -0.5f,
+         0.5f, -0.5f, -0.5f,
+         0.5f, -0.5f, -0.5f,
+         0.5f, -0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
 
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,
+         0.5f, -0.5f, -0.5f,
+         0.5f, -0.5f,  0.5f,
+         0.5f, -0.5f,  0.5f,
+        -0.5f, -0.5f,  0.5f,
+        -0.5f, -0.5f, -0.5f,
 
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+        -0.5f,  0.5f, -0.5f,
+         0.5f,  0.5f, -0.5f,
+         0.5f,  0.5f,  0.5f,
+         0.5f,  0.5f,  0.5f,
+        -0.5f,  0.5f,  0.5f,
+        -0.5f,  0.5f, -0.5f,
     };
 
     std::vector<unsigned int> indices{ 
@@ -94,8 +100,8 @@ int Render::init(const GLADloadproc get_proc_address,
     };
     // clang-format on
 
-    m_shader = loadShader(vertex_path.c_str(), fragment_path.c_str());
-    m_square.init(m_shader, vertices, indices, textures);
+    m_cube.init(m_main_shader, vertices, indices, textures);
+    m_light.init(m_light_shader, vertices, indices, textures);
 
     return 0;
 }
@@ -104,7 +110,7 @@ void Render::update(EventStates* states,
                     EventActions* actions,
                     const float dt)
 {
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     processEvents(states, actions, dt);
@@ -112,41 +118,65 @@ void Render::update(EventStates* states,
     glm::mat4 view       = m_camera.lookAt();
     glm::mat4 projection = glm::perspective(glm::radians(m_camera.zoom()), m_aspect_ratio, 0.1f, 100.0f);
 
-    m_shader->use();
-    m_shader->setMat4("view", view);
-    m_shader->setMat4("projection", projection);
+    // Draw cube
+    glm::mat4 cube_model = glm::mat4(1.0f);
 
-    glm::vec3 cube_positions[] = {
-        glm::vec3(0.0f, 0.0f, 0.0f),
-        glm::vec3(2.0f, 5.0f, -15.0f),
-        glm::vec3(-1.5f, -2.2f, -2.5f),
-        glm::vec3(-3.8f, -2.0f, -12.3f),
-        glm::vec3(2.4f, -0.4f, -3.5f),
-        glm::vec3(-1.7f, 3.0f, -7.5f),
-        glm::vec3(1.3f, -2.0f, -2.5f),
-        glm::vec3(1.5f, 2.0f, -2.5f),
-        glm::vec3(1.5f, 0.2f, -1.5f),
-        glm::vec3(-1.3f, 1.0f, -1.5f),
-    };
+    m_main_shader->use();
+    m_main_shader->setMat4("view", view);
+    m_main_shader->setMat4("projection", projection);
+    m_main_shader->setMat4("model", cube_model);
 
-    static float angle_changing = 1.0f;
+    m_main_shader->setVec3("object_color", glm::vec3(1.0f, 0.5f, 0.31f));
+    m_main_shader->setVec3("light_color", glm::vec3(1.0f, 1.0f, 1.0f));
 
-    for (unsigned int i = 0; i < 10; i++)
-    {
-        glm::mat4 model = glm::mat4(1.0f);
-        model           = glm::translate(model, cube_positions[i]);
+    m_cube.draw();
+    // End draw cube
 
-        float base_angle = 20.0f * i + 20.0f;
+    // Draw light
+    glm::mat4 light_model = glm::mat4(1.0f);
+    glm::vec3 light_pos(1.2f, 1.0f, 2.0f);
+    light_model = glm::translate(light_model, light_pos);
+    light_model = glm::scale(light_model, glm::vec3(0.2f));
 
-        model = glm::rotate(model,
-                            angle_changing * glm::radians(base_angle),
-                            glm::vec3(1.0f, 0.3f, 0.5f));
+    m_light_shader->use();
+    m_light_shader->setMat4("view", view);
+    m_light_shader->setMat4("projection", projection);
+    m_light_shader->setMat4("model", light_model);
 
-        m_shader->setMat4("model", model);
-        m_square.draw();
-    }
+    m_light.draw();
+    // End draw light
 
-    angle_changing += 1.0f * dt;
+    // glm::vec3 cube_positions[] = {
+    //     glm::vec3(0.0f, 0.0f, 0.0f),
+    //     glm::vec3(2.0f, 5.0f, -15.0f),
+    //     glm::vec3(-1.5f, -2.2f, -2.5f),
+    //     glm::vec3(-3.8f, -2.0f, -12.3f),
+    //     glm::vec3(2.4f, -0.4f, -3.5f),
+    //     glm::vec3(-1.7f, 3.0f, -7.5f),
+    //     glm::vec3(1.3f, -2.0f, -2.5f),
+    //     glm::vec3(1.5f, 2.0f, -2.5f),
+    //     glm::vec3(1.5f, 0.2f, -1.5f),
+    //     glm::vec3(-1.3f, 1.0f, -1.5f),
+    // };
+
+    // static float angle_changing = 1.0f;
+
+    // for (unsigned int i = 0; i < 10; i++)
+    // {
+    //     glm::mat4 model = glm::mat4(1.0f);
+    //     model           = glm::translate(model, cube_positions[i]);
+
+    //     float base_angle = 20.0f * i + 20.0f;
+
+    //     model = glm::rotate(model,
+    //                         angle_changing * glm::radians(base_angle),
+    //                         glm::vec3(1.0f, 0.3f, 0.5f));
+
+    //     m_shader->setMat4("model", model);
+    //     m_cube.draw();
+    // }
+
+    // angle_changing += 1.0f * dt;
 }
 
 void Render::processEvents(EventStates* states,

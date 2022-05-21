@@ -12,9 +12,14 @@ class Render
 {
 private:
     static float m_aspect_ratio;
+
     static Camera m_camera;
-    static Shader* m_shader;
-    static Mesh m_square;
+
+    static Shader* m_main_shader;
+    static Shader* m_light_shader;
+
+    static Mesh m_cube;
+    static Mesh m_light;
 
 public:
     static int init(const GLADloadproc get_proc_address,

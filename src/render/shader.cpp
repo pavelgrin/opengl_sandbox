@@ -74,13 +74,20 @@ void Shader::checkErrors(unsigned int object, std::string type)
     }
 }
 
-void Shader::setInt(const std::string& name, int value) const
-{
-    glUniform1i(glGetUniformLocation(m_id, name.c_str()), value);
-}
-
-void Shader::setMat4(const std::string& name, const glm::mat4& mat) const
+void Shader::setInt(const std::string& name, const int value) const
 {
     unsigned int location = glGetUniformLocation(m_id, name.c_str());
-    glUniformMatrix4fv(location, 1, GL_FALSE, &mat[0][0]);
+    glUniform1i(location, value);
+}
+
+void Shader::setVec3(const std::string& name, const glm::vec3 value) const
+{
+    unsigned int location = glGetUniformLocation(m_id, name.c_str());
+    glUniform3fv(location, 1, &value[0]);
+}
+
+void Shader::setMat4(const std::string& name, const glm::mat4& value) const
+{
+    unsigned int location = glGetUniformLocation(m_id, name.c_str());
+    glUniformMatrix4fv(location, 1, GL_FALSE, &value[0][0]);
 }
