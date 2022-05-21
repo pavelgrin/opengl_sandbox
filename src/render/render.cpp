@@ -1,21 +1,20 @@
 #include "./render.hpp"
+#include "../loaders/loaders.hpp"
 #include "./camera.hpp"
 #include "./mesh.hpp"
 #include "./shader.hpp"
+#include "./texture.hpp"
 #include <glad/glad.h>
 #include <iostream>
+#include <vector>
 
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
-
-// #include <cmath>
-// #include <glm/glm.hpp>
-// #include <glm/gtc/matrix_transform.hpp>
-// #include <vector>
+#include <cmath>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 float Render::m_aspect_ratio = 1.0f;
 Camera Render::m_camera;
-Shader Render::m_shader;
+Shader* Render::m_shader;
 Mesh Render::m_square;
 
 int Render::init(const GLADloadproc get_proc_address,
@@ -28,9 +27,8 @@ int Render::init(const GLADloadproc get_proc_address,
         return -1;
     }
 
-    updateViewport(viewport_width, viewport_height);
-
     glEnable(GL_DEPTH_TEST);
+    updateViewport(viewport_width, viewport_height);
 
     std::string vertex_path   = res_dir + "shaders/main.vertex.glsl";
     std::string fragment_path = res_dir + "shaders/main.fragment.glsl";
@@ -40,40 +38,10 @@ int Render::init(const GLADloadproc get_proc_address,
         res_dir + "textures/awesomeface.png",
     };
 
-    std::vector<unsigned int> textures(texture_paths.size());
+    std::vector<Texture2D*> textures(texture_paths.size());
 
-    // -------------------------------------------------------------------------
-    int width, height, nrChannels;
-    unsigned char* data;
-
-    for (unsigned int i = 0; i < texture_paths.size(); ++i)
-    {
-        glGenTextures(1, &textures[i]);
-        glBindTexture(GL_TEXTURE_2D, textures[i]);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-                        GL_LINEAR_MIPMAP_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-        stbi_set_flip_vertically_on_load(true);
-        data = stbi_load(texture_paths[i].c_str(), &width, &height, &nrChannels,
-                         0);
-
-        if (data)
-        {
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0,
-                         i % 2 ? GL_RGBA : GL_RGB, GL_UNSIGNED_BYTE, data);
-            glGenerateMipmap(GL_TEXTURE_2D);
-        }
-        else
-        {
-            std::cerr << "Failed to load texture\n";
-        }
-        stbi_image_free(data);
-    }
-    // -------------------------------------------------------------------------
+    textures[0] = loadTexture(texture_paths[0].c_str(), false);
+    textures[1] = loadTexture(texture_paths[1].c_str(), true);
 
     // clang-format off
     std::vector<float> vertices{
@@ -126,7 +94,7 @@ int Render::init(const GLADloadproc get_proc_address,
     };
     // clang-format on
 
-    m_shader.init(vertex_path.c_str(), fragment_path.c_str());
+    m_shader = loadShader(vertex_path.c_str(), fragment_path.c_str());
     m_square.init(m_shader, vertices, indices, textures);
 
     return 0;
@@ -144,9 +112,9 @@ void Render::update(EventStates* states,
     glm::mat4 view       = m_camera.lookAt();
     glm::mat4 projection = glm::perspective(glm::radians(m_camera.zoom()), m_aspect_ratio, 0.1f, 100.0f);
 
-    m_shader.use();
-    m_shader.setMat4("view", view);
-    m_shader.setMat4("projection", projection);
+    m_shader->use();
+    m_shader->setMat4("view", view);
+    m_shader->setMat4("projection", projection);
 
     glm::vec3 cube_positions[] = {
         glm::vec3(0.0f, 0.0f, 0.0f),
@@ -174,7 +142,7 @@ void Render::update(EventStates* states,
                             angle_changing * glm::radians(base_angle),
                             glm::vec3(1.0f, 0.3f, 0.5f));
 
-        m_shader.setMat4("model", model);
+        m_shader->setMat4("model", model);
         m_square.draw();
     }
 
@@ -198,11 +166,7 @@ void Render::processEvents(EventStates* states,
 
     actions->toggleCursor(states, states->mousestates[MouseCode::Right]);
 
-    if (!states->cursor_locked)
-    {
-        return;
-    }
-
+    if (states->cursor_locked)
     {
         float forward{0.0f};
         float backward{0.0f};

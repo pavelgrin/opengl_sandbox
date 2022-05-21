@@ -7,18 +7,18 @@ Mesh::~Mesh()
     glDeleteBuffers(1, &m_EBO);
 }
 
-void Mesh::init(Shader shader,
+void Mesh::init(Shader* shader,
                 std::vector<float> vertices,
                 std::vector<unsigned int> indices,
-                std::vector<unsigned int> textures)
+                std::vector<Texture2D*> textures)
 {
     m_shader   = shader;
     m_textures = textures;
 
-    m_shader.use();
+    m_shader->use();
     for (unsigned int i = 0; i < m_textures.size(); ++i)
     {
-        m_shader.setInt(("texture" + std::to_string(i)), i);
+        m_shader->setInt(("texture" + std::to_string(i)), i);
     }
 
     glGenVertexArrays(1, &m_VAO);
@@ -48,16 +48,15 @@ void Mesh::init(Shader shader,
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
-void Mesh::draw() const
+void Mesh::draw()
 {
-
     for (unsigned int i = 0; i < m_textures.size(); ++i)
     {
         glActiveTexture(GL_TEXTURE0 + i);
-        glBindTexture(GL_TEXTURE_2D, m_textures[i]);
+        m_textures[i]->bind();
     }
 
-    m_shader.use();
+    m_shader->use();
     glBindVertexArray(m_VAO);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     glDrawArrays(GL_TRIANGLES, 0, 36);
