@@ -15,11 +15,11 @@ void Mesh::init(Shader* shader,
     m_shader   = shader;
     m_textures = textures;
 
-    m_shader->use();
-    for (unsigned int i = 0; i < m_textures.size(); ++i)
-    {
-        m_shader->setInt(("texture" + std::to_string(i)), i);
-    }
+    // m_shader->use();
+    // for (unsigned int i = 0; i < m_textures.size(); ++i)
+    // {
+    //     m_shader->setInt(("texture" + std::to_string(i)), i);
+    // }
 
     glGenVertexArrays(1, &m_VAO);
     glGenBuffers(1, &m_VBO);
@@ -36,12 +36,13 @@ void Mesh::init(Shader* shader,
                  &indices[0], GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float),
-                          (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float),
-                          (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
