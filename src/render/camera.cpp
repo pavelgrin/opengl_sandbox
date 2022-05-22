@@ -6,6 +6,11 @@ Camera::Camera(glm::vec3 position, glm::vec3 world_up)
     updateDirection();
 }
 
+glm::vec3 Camera::getCameraPos()
+{
+    return m_position;
+}
+
 glm::mat4 Camera::lookAt() const
 {
     return glm::lookAt(m_position, m_position + m_direction, m_up);

@@ -36,6 +36,7 @@ public:
     void move(CameraMovement movement);
 
     float zoom() const { return m_zoom; }
+    glm::vec3 getCameraPos();
 
 private:
     void updateYawAngle(float angle);

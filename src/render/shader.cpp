@@ -80,6 +80,12 @@ void Shader::setInt(const std::string& name, const int value) const
     glUniform1i(location, value);
 }
 
+void Shader::setFloat(const std::string& name, const float value) const
+{
+    unsigned int location = glGetUniformLocation(m_id, name.c_str());
+    glUniform1f(location, value);
+}
+
 void Shader::setVec3(const std::string& name, const glm::vec3 value) const
 {
     unsigned int location = glGetUniformLocation(m_id, name.c_str());

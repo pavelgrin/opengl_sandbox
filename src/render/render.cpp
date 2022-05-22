@@ -122,19 +122,36 @@ void Render::update(EventStates* states,
     glm::mat4 projection = glm::perspective(glm::radians(m_camera.zoom()), m_aspect_ratio, 0.1f, 100.0f);
     glm::mat4 view       = m_camera.lookAt();
 
-    glm::vec3 light_pos(1.2f, 1.0f, 2.0f);
+    glm::vec3 light_pos(2.0f, 2.0f, 2.0f);
+
+    // static float angle = 20.0f;
+
+    // light_pos.x = 0.0f + sin(angle) * 2.0f;
+    // light_pos.z = 0.0f + cos(angle) * 2.0f;
+
+    // angle += 1.0f * dt;
 
     // Draw cube
     glm::mat4 cube_model = glm::mat4(1.0f);
+    cube_model           = glm::rotate(cube_model, 180.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 
     m_main_shader->use();
     m_main_shader->setMat4("projection", projection);
     m_main_shader->setMat4("view", view);
     m_main_shader->setMat4("model", cube_model);
 
-    m_main_shader->setVec3("light_pos", light_pos);
-    m_main_shader->setVec3("object_color", glm::vec3(1.0f, 0.5f, 0.31f));
-    m_main_shader->setVec3("light_color", glm::vec3(1.0f, 1.0f, 1.0f));
+    // Black rubber material
+    m_main_shader->setVec3("material.ambient", glm::vec3(0.02f, 0.02f, 0.02f));
+    m_main_shader->setVec3("material.diffuse", glm::vec3(0.01f, 0.01f, 0.01f));
+    m_main_shader->setVec3("material.specular", glm::vec3(0.4f, 0.4f, 0.4f));
+    m_main_shader->setFloat("material.shininess", 10.0f);
+
+    m_main_shader->setVec3("light.position", light_pos);
+    m_main_shader->setVec3("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+    m_main_shader->setVec3("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
+    m_main_shader->setVec3("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+
+    m_main_shader->setVec3("view_pos", m_camera.getCameraPos());
 
     m_cube.draw();
     // End draw cube
