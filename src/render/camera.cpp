@@ -11,6 +11,11 @@ glm::vec3 Camera::getCameraPos()
     return m_position;
 }
 
+glm::vec3 Camera::getCameraFront()
+{
+    return m_direction;
+}
+
 glm::mat4 Camera::lookAt() const
 {
     return glm::lookAt(m_position, m_position + m_direction, m_up);

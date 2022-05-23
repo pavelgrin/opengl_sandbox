@@ -133,13 +133,9 @@ void Render::update(EventStates* states,
     // angle += 1.0f * dt;
 
     // Draw cube
-    glm::mat4 cube_model = glm::mat4(1.0f);
-    // cube_model           = glm::rotate(cube_model, 180.0f, glm::vec3(1.0f, 0.0f, 0.0f));
-
     m_main_shader->use();
     m_main_shader->setMat4("projection", projection);
     m_main_shader->setMat4("view", view);
-    m_main_shader->setMat4("model", cube_model);
 
     // Black rubber material
     // m_main_shader->setVec3("material.ambient", glm::vec3(0.02f, 0.02f, 0.02f));
@@ -147,20 +143,46 @@ void Render::update(EventStates* states,
     // m_main_shader->setVec3("material.specular", glm::vec3(0.4f, 0.4f, 0.4f));
 
     m_main_shader->setInt("material.diffuse", 0);
-    glActiveTexture(GL_TEXTURE0);
-    m_main_shader->setInt("material.specular", 1);
-    glActiveTexture(GL_TEXTURE1);
     m_main_shader->setInt("material.specular", 1);
     m_main_shader->setFloat("material.shininess", 32.0f);
 
     m_main_shader->setVec3("light.position", light_pos);
+    // m_main_shader->setVec3("light.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
+
     m_main_shader->setVec3("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
     m_main_shader->setVec3("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
     m_main_shader->setVec3("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
 
+    m_main_shader->setFloat("light.constant", 1.0f);
+    m_main_shader->setFloat("light.linear", 0.09f);
+    m_main_shader->setFloat("light.quadratic", 0.032f);
+
     m_main_shader->setVec3("view_pos", m_camera.getCameraPos());
 
-    m_cube.draw();
+    glm::vec3 cube_positions[] = {
+        glm::vec3(0.0f, 0.0f, 0.0f),
+        glm::vec3(2.0f, 5.0f, -15.0f),
+        glm::vec3(-1.5f, -2.2f, -2.5f),
+        glm::vec3(-3.8f, -2.0f, -12.3f),
+        glm::vec3(2.4f, -0.4f, -3.5f),
+        glm::vec3(-1.7f, 3.0f, -7.5f),
+        glm::vec3(1.3f, -2.0f, -2.5f),
+        glm::vec3(1.5f, 2.0f, -2.5f),
+        glm::vec3(1.5f, 0.2f, -1.5f),
+        glm::vec3(-1.3f, 1.0f, -1.5f),
+    };
+
+    for (unsigned int i = 0; i < 10; i++)
+    {
+        glm::mat4 model = glm::mat4(1.0f);
+        model           = glm::translate(model, cube_positions[i]);
+        float angle     = 20.0f * i;
+        model           = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+        m_main_shader->setMat4("model", model);
+
+        m_cube.draw();
+    }
+
     // End draw cube
 
     // Draw light

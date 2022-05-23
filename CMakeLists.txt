@@ -35,3 +35,6 @@ target_link_libraries("${APP_NAME}" stb)
 
 add_subdirectory("${CMAKE_SOURCE_DIR}/deps/glm")
 target_link_libraries("${APP_NAME}" glm)
+
+add_subdirectory("${CMAKE_SOURCE_DIR}/deps/assimp")
+target_link_libraries("${APP_NAME}" assimp)
