@@ -246,4 +246,10 @@ void Render::updateViewport(const int width, const int height)
     glViewport(0, 0, width, height);
 }
 
-void Render::fini() {}
+void Render::fini()
+{
+    delete m_main_shader;
+    delete m_light_shader;
+    delete m_cube;
+    delete m_light;
+}
