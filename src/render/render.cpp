@@ -3,6 +3,7 @@
 #include "../window/states.hpp"
 #include "./camera.hpp"
 #include "./mesh.hpp"
+#include "./model.hpp"
 #include "./shader.hpp"
 #include "./texture.hpp"
 #include <glad/glad.h>
@@ -17,8 +18,7 @@ float Render::m_aspect_ratio = 1.0f;
 Camera Render::m_camera;
 Shader* Render::m_main_shader;
 Shader* Render::m_light_shader;
-Mesh* Render::m_cube;
-Mesh* Render::m_light;
+Model* Render::m_backpack;
 
 int Render::init(const GLADloadproc get_proc_address,
                  const std::string res_dir,
@@ -39,75 +39,13 @@ int Render::init(const GLADloadproc get_proc_address,
     std::string light_vertex_path   = res_dir + "shaders/light.vertex.glsl";
     std::string light_fragment_path = res_dir + "shaders/light.fragment.glsl";
 
-    m_main_shader  = loadShader(main_vertex_path.c_str(), main_fragment_path.c_str());
-    m_light_shader = loadShader(light_vertex_path.c_str(), light_fragment_path.c_str());
+    m_main_shader  = loadShader(main_vertex_path, main_fragment_path);
+    m_light_shader = loadShader(light_vertex_path, light_fragment_path);
 
-    std::vector<std::vector<std::string>> texture_paths{
-        {res_dir + "textures/container.png", "material.texture_diffuse0"},
-        {res_dir + "textures/container_specular.png", "material.texture_specular0"},
-    };
+    std::string obj_dir  = res_dir + "objects/backpack/";
+    std::string obj_file = obj_dir + "backpack.obj";
 
-    std::vector<Texture> textures;
-    for (size_t i = 0; i < texture_paths.size(); ++i)
-    {
-        textures.push_back({
-            loadTexture(texture_paths[i][0].c_str(), true),
-            texture_paths[i][1],
-        });
-    }
-    // -------------------------------------------------------------------------
-
-    // clang-format off
-    std::vector<Vertex> vertices = {
-               // positions                    // normals                      // texture coords
-        {glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec2(0.0f, 0.0f)},
-        {glm::vec3( 0.5f, -0.5f, -0.5f), glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec2(1.0f, 0.0f)},
-        {glm::vec3( 0.5f,  0.5f, -0.5f), glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec2(1.0f, 1.0f)},
-        {glm::vec3( 0.5f,  0.5f, -0.5f), glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec2(1.0f, 1.0f)},
-        {glm::vec3(-0.5f,  0.5f, -0.5f), glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec2(0.0f, 1.0f)},
-        {glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec2(0.0f, 0.0f)},
-        {glm::vec3(-0.5f, -0.5f,  0.5f), glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec2(0.0f, 0.0f)},
-        {glm::vec3( 0.5f, -0.5f,  0.5f), glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec2(1.0f, 0.0f)},
-        {glm::vec3( 0.5f,  0.5f,  0.5f), glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec2(1.0f, 1.0f)},
-        {glm::vec3( 0.5f,  0.5f,  0.5f), glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec2(1.0f, 1.0f)},
-        {glm::vec3(-0.5f,  0.5f,  0.5f), glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec2(0.0f, 1.0f)},
-        {glm::vec3(-0.5f, -0.5f,  0.5f), glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec2(0.0f, 0.0f)},
-        {glm::vec3(-0.5f,  0.5f,  0.5f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec2(1.0f, 0.0f)},
-        {glm::vec3(-0.5f,  0.5f, -0.5f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec2(1.0f, 1.0f)},
-        {glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec2(0.0f, 1.0f)},
-        {glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec2(0.0f, 1.0f)},
-        {glm::vec3(-0.5f, -0.5f,  0.5f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec2(0.0f, 0.0f)},
-        {glm::vec3(-0.5f,  0.5f,  0.5f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec2(1.0f, 0.0f)},
-        {glm::vec3( 0.5f,  0.5f,  0.5f), glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec2(1.0f, 0.0f)},
-        {glm::vec3( 0.5f,  0.5f, -0.5f), glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec2(1.0f, 1.0f)},
-        {glm::vec3( 0.5f, -0.5f, -0.5f), glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec2(0.0f, 1.0f)},
-        {glm::vec3( 0.5f, -0.5f, -0.5f), glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec2(0.0f, 1.0f)},
-        {glm::vec3( 0.5f, -0.5f,  0.5f), glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec2(0.0f, 0.0f)},
-        {glm::vec3( 0.5f,  0.5f,  0.5f), glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec2(1.0f, 0.0f)},
-        {glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3( 0.0f, -1.0f,  0.0f), glm::vec2(0.0f, 1.0f)},
-        {glm::vec3( 0.5f, -0.5f, -0.5f), glm::vec3( 0.0f, -1.0f,  0.0f), glm::vec2(1.0f, 1.0f)},
-        {glm::vec3( 0.5f, -0.5f,  0.5f), glm::vec3( 0.0f, -1.0f,  0.0f), glm::vec2(1.0f, 0.0f)},
-        {glm::vec3( 0.5f, -0.5f,  0.5f), glm::vec3( 0.0f, -1.0f,  0.0f), glm::vec2(1.0f, 0.0f)},
-        {glm::vec3(-0.5f, -0.5f,  0.5f), glm::vec3( 0.0f, -1.0f,  0.0f), glm::vec2(0.0f, 0.0f)},
-        {glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3( 0.0f, -1.0f,  0.0f), glm::vec2(0.0f, 1.0f)},
-        {glm::vec3(-0.5f,  0.5f, -0.5f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec2(0.0f, 1.0f)},
-        {glm::vec3( 0.5f,  0.5f, -0.5f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec2(1.0f, 1.0f)},
-        {glm::vec3( 0.5f,  0.5f,  0.5f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec2(1.0f, 0.0f)},
-        {glm::vec3( 0.5f,  0.5f,  0.5f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec2(1.0f, 0.0f)},
-        {glm::vec3(-0.5f,  0.5f,  0.5f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec2(0.0f, 0.0f)},
-        {glm::vec3(-0.5f,  0.5f, -0.5f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec2(0.0f, 1.0f)},
-    };
-
-    std::vector<unsigned int> indices{
-        0, 1, 3, // first triangle
-        1, 2, 3  // second triangle
-    };
-    // clang-format on
-
-    std::vector<Texture> textures2;
-
-    m_cube  = new Mesh(vertices, indices, textures);
-    m_light = new Mesh(vertices, indices, textures2);
+    m_backpack = loadModel(obj_file, obj_dir);
 
     return 0;
 }
@@ -126,17 +64,17 @@ void Render::update(EventStates* states,
 
     glm::vec3 light_pos(2.0f, 2.0f, 2.0f);
 
-    // Draw cube
+    // Draw backpack
     m_main_shader->use();
     m_main_shader->setMat4("projection", projection);
     m_main_shader->setMat4("view", view);
 
     m_main_shader->setFloat("material.shininess", 32.0f);
 
-    m_main_shader->setVec3("light.position", light_pos);
-    // m_main_shader->setVec3("light.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
+    // m_main_shader->setVec3("light.position", light_pos);
+    m_main_shader->setVec3("light.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
 
-    m_main_shader->setVec3("light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+    m_main_shader->setVec3("light.ambient", glm::vec3(1.0f, 1.0f, 1.0f));
     m_main_shader->setVec3("light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
     m_main_shader->setVec3("light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
 
@@ -146,43 +84,25 @@ void Render::update(EventStates* states,
 
     m_main_shader->setVec3("view_pos", m_camera.getCameraPos());
 
-    glm::vec3 cube_positions[] = {
-        glm::vec3(0.0f, 0.0f, 0.0f),
-        glm::vec3(2.0f, 5.0f, -15.0f),
-        glm::vec3(-1.5f, -2.2f, -2.5f),
-        glm::vec3(-3.8f, -2.0f, -12.3f),
-        glm::vec3(2.4f, -0.4f, -3.5f),
-        glm::vec3(-1.7f, 3.0f, -7.5f),
-        glm::vec3(1.3f, -2.0f, -2.5f),
-        glm::vec3(1.5f, 2.0f, -2.5f),
-        glm::vec3(1.5f, 0.2f, -1.5f),
-        glm::vec3(-1.3f, 1.0f, -1.5f),
-    };
+    glm::mat4 model = glm::mat4(1.0f);
+    model           = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+    model           = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
+    m_main_shader->setMat4("model", model);
 
-    for (unsigned int i = 0; i < 10; i++)
-    {
-        glm::mat4 model = glm::mat4(1.0f);
-        model           = glm::translate(model, cube_positions[i]);
-        float angle     = 20.0f * i;
-        model           = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-        m_main_shader->setMat4("model", model);
+    m_backpack->draw(m_main_shader);
 
-        m_cube->draw(m_main_shader);
-    }
-    // End draw cube
+    // // Draw light
+    // glm::mat4 light_model = glm::mat4(1.0f);
+    // light_model           = glm::translate(light_model, light_pos);
+    // light_model           = glm::scale(light_model, glm::vec3(0.2f));
 
-    // Draw light
-    glm::mat4 light_model = glm::mat4(1.0f);
-    light_model           = glm::translate(light_model, light_pos);
-    light_model           = glm::scale(light_model, glm::vec3(0.2f));
+    // m_light_shader->use();
+    // m_light_shader->setMat4("projection", projection);
+    // m_light_shader->setMat4("view", view);
+    // m_light_shader->setMat4("model", light_model);
 
-    m_light_shader->use();
-    m_light_shader->setMat4("projection", projection);
-    m_light_shader->setMat4("view", view);
-    m_light_shader->setMat4("model", light_model);
-
-    m_light->draw(m_light_shader);
-    // End draw light
+    // // m_light->draw(m_light_shader);
+    // // End draw light
 }
 
 void Render::processEvents(EventStates* states,
@@ -250,6 +170,4 @@ void Render::fini()
 {
     delete m_main_shader;
     delete m_light_shader;
-    delete m_cube;
-    delete m_light;
 }

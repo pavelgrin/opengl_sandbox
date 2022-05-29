@@ -19,6 +19,7 @@ struct Texture
 {
     Texture2D* texture;
     std::string name;
+    std::string path;
 };
 
 class Mesh

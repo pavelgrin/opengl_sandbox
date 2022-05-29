@@ -11,7 +11,7 @@ private:
     std::string m_name;
 
 public:
-    Texture2D(const int width, const int height, const bool alpha, const unsigned char* data);
+    Texture2D(const int width, const int height, const int channels, const unsigned char* data);
     ~Texture2D();
 
     void bind(Shader* shader, std::string name, unsigned int index);

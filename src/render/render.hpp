@@ -7,7 +7,7 @@ struct EventActions;
 
 class Camera;
 class Shader;
-class Mesh;
+class Model;
 
 using GLADloadproc = void* (*)(const char*);
 
@@ -21,8 +21,7 @@ private:
     static Shader* m_main_shader;
     static Shader* m_light_shader;
 
-    static Mesh* m_cube;
-    static Mesh* m_light;
+    static Model* m_backpack;
 
 public:
     static int init(const GLADloadproc get_proc_address,

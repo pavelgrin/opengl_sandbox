@@ -12,9 +12,11 @@ set(SOURCE
    "${CMAKE_SOURCE_DIR}/src/render/shader.cpp"
    "${CMAKE_SOURCE_DIR}/src/render/texture.cpp"
    "${CMAKE_SOURCE_DIR}/src/render/mesh.cpp"
+   "${CMAKE_SOURCE_DIR}/src/render/model.cpp"
    "${CMAKE_SOURCE_DIR}/src/render/camera.cpp"
    "${CMAKE_SOURCE_DIR}/src/loaders/load_shader.cpp"
    "${CMAKE_SOURCE_DIR}/src/loaders/load_texture.cpp"
+   "${CMAKE_SOURCE_DIR}/src/loaders/load_model.cpp"
 )
 
 add_executable("${APP_NAME}" "${SOURCE}")

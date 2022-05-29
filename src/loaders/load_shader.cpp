@@ -5,9 +5,9 @@
 #include <sstream>
 #include <string>
 
-Shader* loadShader(const char* vertex_shader_file,
-                   const char* fragment_shader_file,
-                   const char* geometry_shader_file)
+Shader* loadShader(const std::string vertex_shader_file,
+                   const std::string fragment_shader_file,
+                   const std::string geometry_shader_file)
 {
     std::string v_shader_code;
     std::string f_shader_code;
@@ -30,7 +30,7 @@ Shader* loadShader(const char* vertex_shader_file,
         v_shader_code = v_shader_stream.str();
         f_shader_code = f_shader_stream.str();
 
-        if (geometry_shader_file != nullptr)
+        if (geometry_shader_file != "")
         {
             std::ifstream g_shader_file(geometry_shader_file);
             std::stringstream g_shader_stream;
@@ -50,8 +50,8 @@ Shader* loadShader(const char* vertex_shader_file,
 
     const char* v_shader_source = v_shader_code.c_str();
     const char* f_shader_source = f_shader_code.c_str();
-    const char* g_shader_source = geometry_shader_file ? g_shader_code.c_str()
-                                                       : nullptr;
+    const char* g_shader_source = geometry_shader_file != "" ? g_shader_code.c_str()
+                                                             : nullptr;
 
     return new Shader(v_shader_source, f_shader_source, g_shader_source);
 }

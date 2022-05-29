@@ -2,10 +2,15 @@
 #include "./shader.hpp"
 #include <glad/glad.h>
 
-Texture2D::Texture2D(const int width, const int height, const bool alpha, const unsigned char* data)
+Texture2D::Texture2D(const int width, const int height, const int channels, const unsigned char* data)
 {
-    unsigned int image_format = alpha ? GL_RGBA
-                                      : GL_RGB;
+    unsigned int image_format;
+    if (channels == 1)
+        image_format = GL_RED;
+    else if (channels == 3)
+        image_format = GL_RGB;
+    else if (channels == 4)
+        image_format = GL_RGBA;
 
     glGenTextures(1, &m_id);
     glBindTexture(GL_TEXTURE_2D, m_id);

@@ -52,11 +52,10 @@ void Mesh::draw(Shader* shader)
 {
     for (unsigned int i = 0; i < m_textures.size(); ++i)
     {
-        m_textures[i].texture->bind(shader, m_textures[i].name, i);
+        m_textures[i].texture->bind(shader, m_textures[i].name + std::to_string(i), i);
     }
 
     glBindVertexArray(m_VAO);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
-    // glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }

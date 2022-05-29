@@ -10,8 +10,8 @@ struct Material {
 };
 
 struct Light {
-    vec3 position;
-    // vec3 direction;
+    // vec3 position;
+    vec3 direction;
 
     vec3 ambient;
     vec3 diffuse;
@@ -37,12 +37,12 @@ void main()
 {
     vec3 normalized_normal = normalize(normal);
 
-    vec3 light_direction = normalize(light.position - frag_pos);
-    // vec3 light_direction = normalize(-light.direction);
+    // vec3 light_direction = normalize(light.position - frag_pos);
+    vec3 light_direction = normalize(-light.direction);
 
-    float light_distance = length(light.position - frag_pos);
-    float attenuation = 1.0 / (light.constant + light.linear * light_distance + 
-    		            light.quadratic * (light_distance * light_distance));
+    // float light_distance = length(light.position - frag_pos);
+    // float attenuation = 1.0 / (light.constant + light.linear * light_distance + 
+    // 		            light.quadratic * (light_distance * light_distance));
     
 
     vec3 view_direction = normalize(view_pos - frag_pos);
@@ -63,7 +63,8 @@ void main()
     vec3 diffuse = light.diffuse * (diff * diffuse_color);  
     vec3 specular = light.specular * (spec * specular_color);
 
-    vec3 result = (ambient + diffuse + specular) * attenuation;
+    // vec3 result = (ambient + diffuse + specular) * attenuation;
+    vec3 result = (ambient + diffuse + specular);
 
     frag_color = vec4(result, 1.0);
 }
