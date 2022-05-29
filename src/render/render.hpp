@@ -1,12 +1,15 @@
 #pragma once
 
-#include "../window/states.hpp"
 #include <string>
 
-using GLADloadproc = void* (*)(const char*);
+struct EventStates;
+struct EventActions;
+
 class Camera;
 class Shader;
 class Mesh;
+
+using GLADloadproc = void* (*)(const char*);
 
 class Render
 {
@@ -18,8 +21,8 @@ private:
     static Shader* m_main_shader;
     static Shader* m_light_shader;
 
-    static Mesh m_cube;
-    static Mesh m_light;
+    static Mesh* m_cube;
+    static Mesh* m_light;
 
 public:
     static int init(const GLADloadproc get_proc_address,
@@ -28,13 +31,9 @@ public:
 
     static void fini();
 
-    static void update(EventStates* states,
-                       EventActions* actions,
-                       const float dt);
+    static void update(EventStates* states, EventActions* actions, const float dt);
 
 private:
     static void updateViewport(const int width, const int height);
-    static void processEvents(EventStates* states,
-                              EventActions* actions,
-                              const float dt);
+    static void processEvents(EventStates* states, EventActions* actions, const float dt);
 };

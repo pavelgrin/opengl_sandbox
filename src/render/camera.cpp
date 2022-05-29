@@ -1,4 +1,6 @@
 #include "./camera.hpp"
+#include <cmath>
+#include <glm/gtc/matrix_transform.hpp>
 
 Camera::Camera(glm::vec3 position, glm::vec3 world_up)
     : m_position(position), m_world_up(world_up)

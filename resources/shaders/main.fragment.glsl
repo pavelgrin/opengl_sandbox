@@ -4,8 +4,8 @@ struct Material {
     // vec3 ambient;
     // vec3 diffuse;
     // vec3 specular;
-    sampler2D diffuse;
-    sampler2D specular;
+    sampler2D texture_diffuse0;
+    sampler2D texture_specular0;
     float shininess;
 };
 
@@ -55,9 +55,9 @@ void main()
     // vec3 diffuse_color = material.diffuse;
     // vec3 specular_color = material.specular;
 
-    vec3 ambient_color = vec3(texture(material.diffuse, tex_coords));
+    vec3 ambient_color = vec3(texture(material.texture_diffuse0, tex_coords));
     vec3 diffuse_color = ambient_color;
-    vec3 specular_color = vec3(texture(material.specular, tex_coords));;
+    vec3 specular_color = vec3(texture(material.texture_specular0, tex_coords));
 
     vec3 ambient = light.ambient * ambient_color;
     vec3 diffuse = light.diffuse * (diff * diffuse_color);  

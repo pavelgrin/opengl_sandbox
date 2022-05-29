@@ -1,4 +1,5 @@
 #include "./texture.hpp"
+#include "./shader.hpp"
 #include <glad/glad.h>
 
 Texture2D::Texture2D(const int width, const int height, const bool alpha, const unsigned char* data)
@@ -21,7 +22,14 @@ Texture2D::Texture2D(const int width, const int height, const bool alpha, const 
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void Texture2D::bind()
+void Texture2D::bind(Shader* shader, std::string name, unsigned int index)
 {
+    if (m_name != name)
+    {
+        m_name = name;
+        shader->setInt(name, index);
+    }
+
+    glActiveTexture(GL_TEXTURE0 + index);
     glBindTexture(GL_TEXTURE_2D, m_id);
 }
