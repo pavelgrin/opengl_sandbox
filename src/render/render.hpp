@@ -21,7 +21,7 @@ private:
     static Shader* m_main_shader;
     static Shader* m_light_shader;
 
-    static Model* m_backpack;
+    static Model* m_object;
 
 public:
     static int init(const GLADloadproc get_proc_address,

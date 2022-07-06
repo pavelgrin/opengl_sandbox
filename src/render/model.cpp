@@ -9,6 +9,11 @@ Model::Model(const std::string textures_dir, const aiScene* scene)
     processNode(scene->mRootNode, scene);
 }
 
+Model::~Model()
+{
+    // TODO: Delete mesh pointers
+}
+
 void Model::draw(Shader* shader)
 {
     for (unsigned int i = 0; i < meshes.size(); ++i)
@@ -50,11 +55,14 @@ Mesh* Model::processMesh(aiMesh* mesh, const aiScene* scene)
 
         vertex.position = vec3;
 
-        vec3.x = mesh->mNormals[i].x;
-        vec3.y = mesh->mNormals[i].y;
-        vec3.z = mesh->mNormals[i].z;
+        if (mesh->HasNormals())
+        {
+            vec3.x = mesh->mNormals[i].x;
+            vec3.y = mesh->mNormals[i].y;
+            vec3.z = mesh->mNormals[i].z;
 
-        vertex.normal = vec3;
+            vertex.normal = vec3;
+        }
 
         if (mesh->mTextureCoords[0])
         {

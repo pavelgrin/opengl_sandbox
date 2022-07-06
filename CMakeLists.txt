@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.16 FATAL_ERROR)
 
 project(OPENGL_SANDBOX)
 
+set(CMAKE_BUILD_TYPE "Release")
+
 set(APP_NAME app)
 
 set(SOURCE

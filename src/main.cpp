@@ -9,24 +9,24 @@ const char* TITLE = "OpenGL Sandbox";
 
 int main(int argc, char* argv[])
 {
-    int init_result = 0;
+    int init_result_error = 0;
 
     std::string app_path      = argv[0];
     std::string app_dir       = app_path.substr(0, app_path.find("/app"));
     std::string resources_dir = app_dir + "/../../resources/";
 
-    init_result = Window::create(WIDTH, HEIGHT, TITLE);
+    init_result_error = Window::create(WIDTH, HEIGHT, TITLE);
 
-    if (init_result)
-        return init_result;
+    if (init_result_error)
+        return init_result_error;
 
     loadproc get_proc_address = Window::getProcAddressFunction();
-    init_result               = Render::init(get_proc_address, resources_dir, WIDTH, HEIGHT);
+    init_result_error         = Render::init(get_proc_address, resources_dir, WIDTH, HEIGHT);
 
-    if (init_result)
+    if (init_result_error)
     {
         Window::terminate();
-        return init_result;
+        return init_result_error;
     }
 
     Events::init(Window::getWindow(), WIDTH, HEIGHT);

@@ -18,7 +18,7 @@ float Render::m_aspect_ratio = 1.0f;
 Camera Render::m_camera;
 Shader* Render::m_main_shader;
 Shader* Render::m_light_shader;
-Model* Render::m_backpack;
+Model* Render::m_object;
 
 int Render::init(const GLADloadproc get_proc_address,
                  const std::string res_dir,
@@ -42,10 +42,10 @@ int Render::init(const GLADloadproc get_proc_address,
     m_main_shader  = loadShader(main_vertex_path, main_fragment_path);
     m_light_shader = loadShader(light_vertex_path, light_fragment_path);
 
-    std::string obj_dir  = res_dir + "objects/backpack/";
-    std::string obj_file = obj_dir + "backpack.obj";
+    std::string obj_resources_dir = res_dir + "objects/ponycar/";
+    std::string obj_file          = obj_resources_dir + "Pony_cartoon.obj";
 
-    m_backpack = loadModel(obj_file, obj_dir);
+    m_object = loadModel(obj_file, obj_resources_dir);
 
     return 0;
 }
@@ -86,10 +86,10 @@ void Render::update(EventStates* states,
 
     glm::mat4 model = glm::mat4(1.0f);
     model           = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
-    model           = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));
+    model           = glm::scale(model, glm::vec3(0.01f, 0.01f, 0.01f));
     m_main_shader->setMat4("model", model);
 
-    m_backpack->draw(m_main_shader);
+    m_object->draw(m_main_shader);
 
     // // Draw light
     // glm::mat4 light_model = glm::mat4(1.0f);
@@ -170,4 +170,5 @@ void Render::fini()
 {
     delete m_main_shader;
     delete m_light_shader;
+    delete m_object;
 }
